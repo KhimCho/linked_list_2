@@ -1,0 +1,390 @@
+#include <iostream>
+using namespace std;
+struct node
+{
+	int data;
+	struct node* pNext;//con trỏ dùng để liên kết giữa các node 
+	node(int _da = 0) :data(_da) {};
+};
+typedef struct node NODE;//thay thế struct node -> NODE 
+
+//khai báo cấu trúc của một danh sách liên kết
+struct list
+{
+	NODE* pHead;//quản lý cuối 
+	NODE* pTail;//quản lý đầu 
+};
+
+typedef struct list LIST;//thay thế struct list -> LIST
+
+//khởi tạo cấu trúc danh sách liên kết đơn
+void KhoiTao(LIST &l)
+{
+	//cho hai cái node trỏ đến null - vì danh sách liên kết chưa có phần tử 
+	l.pHead = NULL;
+	l.pTail = NULL;
+}
+//hàm khởi tạo 1 cái node
+NODE* KhoiTaoNode(int x)
+{
+	NODE* p = new NODE;//cấp phát vùng nhớ cho NODE p
+	if (p == NULL)
+	{
+		cout << "\nKhong du bo nho ve cap phat";
+		return NULL;
+	}
+	p->data = x;//truyền giá trị x vào data
+	p->pNext = NULL;//khai báo node chưa có liên kết đến node nào hết -> con trỏ của nó sẽ trỏ đến NULL
+	return p;//trả về NODE p vừa khởi tạo
+}
+//hàm thêm NODE vào đầu danh sách liên kết
+void ThemVaoDau(LIST& l, NODE* p)
+{
+	//danh sách đang rỗng
+	if (l.pHead == NULL)
+	{
+		l.pHead = l.pTail = p; // node đầu cũng là node cuối và là p
+	}
+	/*các bước thêm danh sách liên kết
+	B1:khởi tạo một NODE X = NULL
+	B2:cho X trỏ đến node p.head = NULL lúc đầu
+	b3:khởi tạo lai p.head sau khi thêm NODE x vô danh sách liên kết */
+	else
+	{
+		p->pNext = l.pHead;//cho con trỏ của node cần thêm là node p liên kết đến node đầu - pHead
+		l.pHead = p;//cập nhật lại pHead chính là node node p
+	}
+}
+//hàm thêm node p vào cuối danh sách liên kết đơn
+void ThemVaoCuoi(LIST& l, NODE* p)
+{
+	if (l.pTail == NULL)
+	{
+		l.pTail = l.pHead = p;
+	}
+	else
+	{
+		l.pTail->pNext = p;
+		l.pTail = p;
+	}
+}
+//hàm xuất 
+void Xuat(LIST l)
+{
+	for (NODE* k = l.pHead; k != NULL; k = k->pNext)
+	{
+		cout << k->data << " ";
+	}
+}
+//hàm đếm 
+int DemSoNut(LIST l)
+{
+	int count = 0;
+	NODE* p = l.pHead;
+	while (p != NULL)
+	{
+		count++;
+		p = p->pNext;
+	}
+	return count;
+}
+//hàm tìm kiếm phần tử X
+int TimKiem(LIST l, int value)
+{
+	int pos = 1;
+	for (NODE* p = l.pHead; p != NULL; p = p->pNext)
+	{
+		if (p->data == value)
+		{
+			return pos;
+		}
+		++pos;
+	}
+	return -1;
+}
+//---------------------------
+
+node* CreateNode(int x) {
+	node* p = new node;
+	if (p == NULL) {
+		return NULL;
+	}
+	p->data = x;
+	p->pNext = NULL;
+	return p;
+}
+void Init(list& l) {
+	l.pHead = NULL;
+	l.pTail = NULL;
+}
+void Travel(list l) {
+	node* p = l.pHead;
+	while (p != NULL) {
+		cout << p->data << " ";
+		p = p->pNext;
+	}
+}
+
+void RemoveHead(list& l)
+{
+	if (l.pHead != NULL) {
+		node* p = l.pHead;
+		l.pHead = p->pNext;
+		delete p;
+		if (l.pHead == NULL)
+			l.pTail = NULL;
+	}
+}
+void RemoveAfterQ(list& l, node* Q, int& x) {
+	node* p;
+	if (Q != NULL) {
+		p = Q->pNext;
+		if (p != NULL) {
+			if (p == l.pTail)
+				l.pTail = Q;
+			Q->pNext = p->pNext;
+			x = p->data;
+			delete p;
+		}
+	}
+}
+bool RemoveTail(list& l) {
+	node* p = l.pHead;
+	if (p == NULL || p->pNext == NULL)
+		RemoveTail(l);
+	while (p->pNext->pNext != NULL)
+	{
+		p = p->pNext;
+	}
+	cout << p->data << '\n';
+	delete l.pTail;
+	p->pNext = NULL;
+	l.pTail = p;
+	return 1;
+}
+void setup(list l)
+{
+	int input;
+	do {
+		cin >> input;
+		if (input != -1) {
+			node* p = CreateNode(input);
+		}
+	} while (input != -1);
+}
+
+//Menu-----
+void print_list(list l)
+{
+	Xuat(l);
+}
+void add_head(list l)
+{
+	int x;
+	cout << "Nhap vao x: ";
+	cin >> x;
+	node *p = KhoiTaoNode(x);
+	ThemVaoDau(l, p);
+}
+void add_tail(list l)
+{
+	int x;
+	cout << "Nhap vao x: ";
+	cin >> x;
+	node *p = KhoiTaoNode(x);
+	ThemVaoCuoi(l, p);
+}
+void count_list(list l)
+{
+	cout << DemSoNut(l);
+}
+void find_X(list l)
+{
+	int x;
+	cout << "Nhap vao gia tri cua x: ";
+	cin >> x;
+	TimKiem(l, x);
+}
+
+node * mergelist(node * l1, node *l2)
+{
+	node *ptr = new node;
+	node *curr = ptr;
+
+	while (l1 != NULL && l2 != NULL)
+	{
+		if (l1->data <= l2->data)
+		{
+			curr->pNext = l1;
+			l1 = l1->pNext;
+		}
+		else
+		{
+			curr->pNext = l2;
+			l2 = l2->pNext;
+		}
+
+		curr = curr->pNext;
+
+	}
+	if (l1 != NULL)
+	{
+		curr->pNext = l1;
+		l1 = l1->pNext;
+	}
+	if (l2 != NULL)
+	{
+		curr->pNext = l2;
+		l2 = l2->pNext;
+	}
+	return ptr->pNext;
+}
+
+
+node* sortList(node* head) {
+	if (head == NULL || head->pNext == NULL)
+		return head;
+	node *temp = NULL;
+	node *slow = head;
+	node *fast = head;
+	while (fast != NULL && fast->pNext != NULL)
+	{
+		temp = slow;
+		slow = slow->pNext;
+		fast = fast->pNext->pNext;
+
+	}
+	temp->pNext = NULL;
+	node * l1 = sortList(head);
+	node * l2 = sortList(slow);
+
+	return mergelist(l1, l2);
+}
+void sort_list(list l)
+{
+	l.pHead = sortList(l.pHead);
+}
+
+void add_node_sorted(list l)
+{
+	int num;
+	cout << "Nhap vao so can them vao danh sach: ";
+	cin >> num;
+	node * obj = new node(num);
+	if (l.pHead == NULL)
+	{
+		l.pHead = obj;
+		l.pTail = obj;
+	}
+	else
+	{
+		node * ptr = l.pHead;
+		if (ptr->data >= num)
+		{
+			obj->pNext = ptr;
+			l.pHead = obj;
+		}
+		else
+			while (ptr != NULL)
+				if (ptr->pNext->data >= num)
+				{
+					obj->pNext = ptr->pNext;
+					ptr->pNext = obj;
+					break;
+				}
+				else
+					ptr = ptr->pNext;
+
+	}
+}
+
+
+
+//~Menu----
+void Menu(list l)
+{
+	cout << "Menu:\n";
+	cout << "0. Xuat danh sach." << endl;
+	cout << "1. Them mot nut vao dau danh sach." << endl;
+	cout << "2. Them mot nut vao cuoi danh sach." << endl;
+	cout << "3. Dem so nut trong danh sach." << endl;
+	cout << "4. Tim nut voi data X." << endl;
+	cout << "5. Xoa nut dau cua danh sach." << endl;
+	cout << "6. Xoa nut cuoi cua danh sach." << endl;
+	cout << "7. Sap xep lai danh sach." << endl;
+	cout << "8. Chen mot nut vao danh sach." << endl;
+	cout << "-------------------------------" << endl;
+	cout << "Your action: ";
+	int option;
+	cin >> option;
+	switch (option)
+	{
+	case 0:
+		print_list(l);
+		break;
+	case 1:
+		add_head(l);
+		break;
+	case 2:
+		add_tail(l);
+		break;
+	case 3:
+		count_list(l);
+		break;
+	case 4:
+		find_X(l);
+		break;
+	case 5:
+		RemoveHead(l);
+		break;
+	case 6:
+		RemoveTail(l);
+		break;
+	case 7:
+		sort_list(l);
+		break;
+	case 8:
+		add_node_sorted(l);
+	}
+
+}
+int main()
+{
+	int x;
+	list l;
+	setup(l);
+
+	Travel(l);
+	RemoveHead(l);
+	RemoveTail(l);
+	KhoiTao(l); //khởi tạo dslk đơn
+
+	int n;
+	cout << "Nhap so luong node can them: ";
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		int x;
+		cout << "\nNhap gia tri so nguyen: ";
+		cin >> x;
+		NODE* p = KhoiTaoNode(x);//khởi tạo một cái node số nguyên 
+		if (x < 0) break;
+		//ThemVaoDau(l, p); 
+		ThemVaoCuoi(l, p);
+
+	}
+	cout << "Danh Sach Lien Ket Don: ";
+	Xuat(l);
+
+	int len = DemSoNut(l);
+	cout << "\nLength of list: " << len;
+
+	//int x;
+	cout << "\nNhap so gia tri x can tim: ";
+	cin >> x;
+	int index = TimKiem(l, x);
+	cout << "Tim thay tai nut: " << index;
+
+	system("pause");
+	return 0;
+}
